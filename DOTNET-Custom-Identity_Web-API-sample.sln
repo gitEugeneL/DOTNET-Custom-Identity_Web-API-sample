@@ -8,9 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F8B31124-FEC0-498C-97FC-729F1C7A1722}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		Server\Dockerfile = Server\Dockerfile
 		docker-compose.yml = docker-compose.yml
 		Makefile = Makefile
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		Api\Dockerfile = Api\Dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CB162BBB-3EF2-415B-8677-DB6BF3273B8C}"
@@ -18,6 +19,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.IntegrationTests", "Tests\Server.IntegrationTests\Server.IntegrationTests.csproj", "{4D3F8F4E-5895-42B2-A259-B4D0CF2AE43F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Tests", "Tests\Server.Tests\Server.Tests.csproj", "{8CF8F0CA-A300-4521-8C90-5D3E73C774F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{911E002E-F2CC-4333-A5E5-AEE88A734604}"
+	ProjectSection(SolutionItems) = preProject
+		Database\Dockerfile = Database\Dockerfile
+		Database\init_database.sql = Database\init_database.sql
+		Database\seed_data.sql = Database\seed_data.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

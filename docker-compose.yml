@@ -1,43 +1,22 @@
-version: "3.8"
-
 services:
-  
-  server.database:
-    image: postgres:latest
-    container_name: server.database
+  api.database:
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    image: database:latest
+    container_name: api.database
     environment:
-      POSTGRES_DB: app
+      POSTGRES_DB: api
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    volumes:
-      - server.database:/var/lib/postgresql/data:rw    
-    networks:
-      - identity-sample-network
-
-  server.api:
-    build:
-      context: .
-      dockerfile: Server/Dockerfile
-    container_name: server.api
-    environment:
-      - "ASPNETCORE_ENVIRONMENT=Development"
-      - "ConnectionStrings__PSQL=Host=server.database;Port=5432;Database=app;Username=user;Password=password;"
-    ports:
-      - "8000:8080"
     deploy:
       restart_policy:
         condition: on-failure
         max_attempts: 3
-    depends_on:
-      - server.database
-    networks:
-      - identity-sample-network
-
-networks:
-  identity-sample-network:
-    driver: bridge
+    ports:
+      - "5432:5432"
+    volumes:
+      - api.database:/var/lib/postgresql
 
 volumes:
-  server.database:
+  api.database:

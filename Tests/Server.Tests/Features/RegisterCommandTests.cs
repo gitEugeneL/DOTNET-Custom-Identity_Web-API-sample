@@ -4,9 +4,9 @@ using Xunit;
 
 namespace Server.Tests.Features;
 
-public class RegistrationCommandTests
+public class CommandTests
 {
-    private readonly RegistrationValidator _validator = new();
+    private readonly Validator _validator = new();
 
     [Theory]
     [InlineData("email@email.com", "StrongPass1@", "StrongPass1@", "Username123", "https://clientapp.com/api/registrarion")]
@@ -23,7 +23,7 @@ public class RegistrationCommandTests
         int? age = null)
     {
         /*** arrange ***/
-        var model = new RegistrationCommand(email, password, confirmPassword, username, clientUri, firstName, lastName, age);
+        var model = new Command(email, password, confirmPassword, username, clientUri, firstName, lastName, age);
 
         /*** act ***/
         var result = _validator.TestValidate(model);
@@ -54,7 +54,7 @@ public class RegistrationCommandTests
     {
         /*** arrange ***/
         var model = 
-            new RegistrationCommand(email, password, confirmPassword, username, clientUri, firstName, lastName, age);
+            new Command(email, password, confirmPassword, username, clientUri, firstName, lastName, age);
 
         /*** act ***/
         var result = _validator.TestValidate(model);

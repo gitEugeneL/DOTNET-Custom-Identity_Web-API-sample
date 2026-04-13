@@ -3,3 +3,6 @@ up:
 
 down:
 	docker-compose down
+
+down-and-clean:
+	docker-compose down -v

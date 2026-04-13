@@ -1,12 +1,12 @@
-namespace Server.Domain.Entities;
+using Api.Domain.Common;
 
-public sealed class RefreshToken
+namespace Api.Domain.Entities;
+
+public sealed class RefreshToken : BaseAuditableEntity
 {
-    public Guid Id { get; init; }
     public required string Token { get; init; }
     public required DateTime Expires { get; init; }
 
     /*** Relations ***/
-    public required User User { get; init; }
-    public string UserId { get; init; }
+    public required Guid UserId { get; init; }
 }
