@@ -128,7 +128,7 @@ namespace Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Server.Domain.Entities.RefreshToken", b =>
+            modelBuilder.Entity("Api.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -152,7 +152,7 @@ namespace Server.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("Server.Domain.Entities.Role", b =>
+            modelBuilder.Entity("Api.Domain.Entities.Role", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -197,7 +197,7 @@ namespace Server.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Server.Domain.Entities.User", b =>
+            modelBuilder.Entity("Api.Domain.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -272,7 +272,7 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Server.Domain.Entities.Role", null)
+                    b.HasOne("Api.Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -281,7 +281,7 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Server.Domain.Entities.User", null)
+                    b.HasOne("Api.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -290,7 +290,7 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Server.Domain.Entities.User", null)
+                    b.HasOne("Api.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -299,13 +299,13 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Server.Domain.Entities.Role", null)
+                    b.HasOne("Api.Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Domain.Entities.User", null)
+                    b.HasOne("Api.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -314,16 +314,16 @@ namespace Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Server.Domain.Entities.User", null)
+                    b.HasOne("Api.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Server.Domain.Entities.RefreshToken", b =>
+            modelBuilder.Entity("Api.Domain.Entities.RefreshToken", b =>
                 {
-                    b.HasOne("Server.Domain.Entities.User", "User")
+                    b.HasOne("Api.Domain.Entities.User", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -332,7 +332,7 @@ namespace Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Server.Domain.Entities.User", b =>
+            modelBuilder.Entity("Api.Domain.Entities.User", b =>
                 {
                     b.Navigation("RefreshTokens");
                 });
