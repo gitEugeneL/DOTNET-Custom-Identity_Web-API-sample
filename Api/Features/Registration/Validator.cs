@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Api.Features.Registration;
 
-public sealed class Validator : AbstractValidator<RegistrationRequest>
+public sealed class Validator : AbstractValidator<Request>
 {
     public Validator()
     {
@@ -13,12 +13,12 @@ public sealed class Validator : AbstractValidator<RegistrationRequest>
             .EmailAddress()
             .WithMessage("Email must be valid email");
 
-
         // --- Password ---
         RuleFor(request => request.Password)
             .NotEmpty()
-            .Length(8, 20)
-            .WithMessage("Password must be between 8 and 20 characters")
+            .WithMessage("Password is required")
+            .Length(8, 150)
+            .WithMessage("Password must be between 8 and 150 characters")
             .Must(p => p.Any(char.IsLetter))
             .WithMessage("Password must contain letters")
             .Must(p => p.Any(char.IsUpper))
@@ -31,6 +31,7 @@ public sealed class Validator : AbstractValidator<RegistrationRequest>
         // --- Confirm Password ---
         RuleFor(request => request.ConfirmPassword)
             .NotEmpty()
+            .WithMessage("Confirm password is required")
             .Equal(command => command.Password)
             .WithMessage("Passwords do not match");
     }

@@ -12,8 +12,8 @@ public static class ApiMessages
         return $"{type} with id: '{id}' not found";
     }
 
-    public static string InvalidIdFormatResultMessage(string id)
+    public static string InvalidAuthMessage()
     {
-        return $"id: '{id}' is invalid format";
+        return "login or password is incorrect or account is locked or not confirmed";
     }
 }

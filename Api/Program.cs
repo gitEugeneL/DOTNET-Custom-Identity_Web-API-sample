@@ -2,6 +2,7 @@ using System.Reflection;
 using Api.Data;
 using Api.Extensions;
 using Api.Services;
+using Api.Services.Interfaces;
 using FluentValidation;
 using IdentityApi.Services.Interfaces;
 using Scalar.AspNetCore;
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddScoped<IPasswordService, PasswordService>()
+    .AddScoped<ILockoutService, LockoutService>()
+    .AddScoped<ITokenService, TokenService>()
     .AddOpenApi()
     .AddSingleton<DapperDbContext>()
     .AddRepoServices()
