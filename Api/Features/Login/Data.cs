@@ -7,7 +7,7 @@ namespace Api.Features.Login;
 
 internal class Data(DapperDbContext dbContext, IConfiguration configuration) : IRepository
 {
-    public async Task<User?> GetUser(string email)
+    public async Task<User?> GetUser(string email, CancellationToken ct)
     {
         // TODO: Add additional checks:
         // AND
@@ -34,10 +34,16 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
                              """;
 
         using var connection = dbContext.CreateConnection();
-        return await connection.QueryFirstOrDefaultAsync<User>(query, new { email });
+
+        return await connection.QueryFirstOrDefaultAsync<User>(
+            new CommandDefinition(
+                query,
+                new { email },
+                cancellationToken: ct)
+        );
     }
 
-    public async Task UpdateLoginLockout(User user)
+    public async Task UpdateLoginLockout(User user, CancellationToken ct)
     {
         const string query = """
                              UPDATE users
@@ -50,16 +56,19 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
                              """;
 
         using var connection = dbContext.CreateConnection();
-        await connection.ExecuteAsync(query, new
+
+        var command = new CommandDefinition(query, new
         {
             loginLocked = user.LoginLocked,
             loginLockExpires = user.LoginLockExpires,
             loginFailedCount = user.LoginFailedCount,
             userId = user.Id
-        });
+        }, cancellationToken: ct);
+
+        await connection.ExecuteAsync(command);
     }
 
-    public async Task UpdateRefreshToken(User user, RefreshToken refreshToken)
+    public async Task AddRefreshToken(User user, RefreshToken refreshToken, CancellationToken ct)
     {
         var maxRefreshTokenCount = int.Parse(configuration["Authentication:RefreshToken.MaxCount"]!);
 
@@ -88,21 +97,35 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
         connection.Open();
         using var transaction = connection.BeginTransaction();
 
-        await connection.ExecuteAsync(deleteOldestQuery, new
-            {
-                userId = user.Id,
-                maxRefreshTokenCount
-            },
-            transaction);
+        try
+        {
+            await connection.ExecuteAsync(new CommandDefinition(
+                deleteOldestQuery,
+                new
+                {
+                    userId = user.Id,
+                    maxRefreshTokenCount
+                },
+                transaction,
+                cancellationToken: ct));
 
-        await connection.ExecuteAsync(insertQuery, new
-            {
-                token = refreshToken.Token,
-                expires = refreshToken.Expires,
-                userId = user.Id
-            },
-            transaction);
+            await connection.ExecuteAsync(new CommandDefinition(
+                insertQuery,
+                new
+                {
+                    token = refreshToken.Token,
+                    expires = refreshToken.Expires,
+                    userId = user.Id
+                },
+                transaction,
+                cancellationToken: ct));
 
-        transaction.Commit();
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
 }

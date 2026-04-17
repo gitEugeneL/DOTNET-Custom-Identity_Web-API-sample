@@ -18,8 +18,8 @@ public class Endpoint : IEndpoint
     }
 
     private static async Task<Results<ValidationProblem, Conflict<string>, Created<string>>> HandleAsync(
-        Request request,
-        IValidator<Request> validator,
+        RegistrationRequest request,
+        IValidator<RegistrationRequest> validator,
         IPasswordService passwordService,
         Data data,
         CancellationToken ct)
@@ -38,7 +38,7 @@ public class Endpoint : IEndpoint
             Role = Role.Customer
         };
 
-        var result = await data.Create(user);
+        var result = await data.Create(user, ct);
         return result is null
             ? TypedResults.Conflict(ApiMessages.ConflictResultMessage(nameof(User), request.Email))
             : TypedResults.Created(ApiPaths.Login, result.ToString());

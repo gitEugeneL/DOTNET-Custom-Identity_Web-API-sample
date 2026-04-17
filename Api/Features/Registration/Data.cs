@@ -7,7 +7,7 @@ namespace Api.Features.Registration;
 
 internal class Data(DapperDbContext dbContext) : IRepository
 {
-    public async Task<Guid?> Create(User user)
+    public async Task<Guid?> Create(User user, CancellationToken ct)
     {
         const string query = """
                              INSERT INTO users (email, pwd_hash, pwd_salt, role)
@@ -17,12 +17,15 @@ internal class Data(DapperDbContext dbContext) : IRepository
                              """;
 
         using var connection = dbContext.CreateConnection();
-        return await connection.QueryFirstOrDefaultAsync<Guid?>(query, new
-        {
-            email = user.Email,
-            pwd_hash = user.PwdHash,
-            pwd_salt = user.PwdSalt,
-            role = user.Role.ToString()
-        });
+
+        return await connection.QueryFirstOrDefaultAsync<Guid?>(new CommandDefinition(query, new
+            {
+                email = user.Email,
+                pwd_hash = user.PwdHash,
+                pwd_salt = user.PwdSalt,
+                role = user.Role.ToString()
+            },
+            cancellationToken: ct)
+        );
     }
 }

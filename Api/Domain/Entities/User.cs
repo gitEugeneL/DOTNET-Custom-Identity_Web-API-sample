@@ -6,8 +6,8 @@ namespace Api.Domain.Entities;
 public sealed class User : BaseAuditableEntity
 {
     public required string Email { get; init; }
-    public required byte[] PwdHash { get; set; }
-    public required byte[] PwdSalt { get; set; }
+    public byte[] PwdHash { get; set; } = [];
+    public byte[] PwdSalt { get; set; } = [];
 
     public bool EmailConfirmed { get; set; }
     public bool LoginLocked { get; set; }

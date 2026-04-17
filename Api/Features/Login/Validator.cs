@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Api.Features.Login;
 
-public sealed class Validator : AbstractValidator<Request>
+public sealed class Validator : AbstractValidator<LoginRequest>
 {
     public Validator()
     {

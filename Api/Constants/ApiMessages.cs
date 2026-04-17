@@ -2,6 +2,10 @@ namespace Api.Constants;
 
 public static class ApiMessages
 {
+    public const string InvalidAuth = "login or password is incorrect or account is locked or not confirmed";
+
+    public const string InvalidToken = "user not found or token is invalid";
+
     public static string ConflictResultMessage(string type, string value)
     {
         return $"{type}: '{value}' already exists";
@@ -12,8 +16,8 @@ public static class ApiMessages
         return $"{type} with id: '{id}' not found";
     }
 
-    public static string InvalidAuthMessage()
+    public static string InvalidIdFormatResultMessage(string value)
     {
-        return "login or password is incorrect or account is locked or not confirmed";
+        return $"parameter: '{value}' is invalid format";
     }
 }

@@ -2,7 +2,7 @@ using Api.Constants;
 
 namespace Api.Tools;
 
-public static class CookieSetter
+public static class CookieManager
 {
     private const string AdminRefreshCookieName = "refreshTokenAdmin";
     private const string CustomerRefreshCookieName = "refreshTokenCustomer";

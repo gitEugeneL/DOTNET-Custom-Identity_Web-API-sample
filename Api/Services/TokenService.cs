@@ -41,11 +41,6 @@ public class TokenService(IConfiguration configuration) : ITokenService
         return (token, expires);
     }
 
-    public bool IsRefreshTokenActive(RefreshToken refreshToken)
-    {
-        return refreshToken.Expires >= DateTime.UtcNow;
-    }
-
     public RefreshToken GenerateRefreshToken(User user)
     {
         return new RefreshToken

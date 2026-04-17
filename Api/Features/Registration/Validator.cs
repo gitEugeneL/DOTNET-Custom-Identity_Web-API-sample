@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Api.Features.Registration;
 
-public sealed class Validator : AbstractValidator<Request>
+public sealed class Validator : AbstractValidator<RegistrationRequest>
 {
     public Validator()
     {
