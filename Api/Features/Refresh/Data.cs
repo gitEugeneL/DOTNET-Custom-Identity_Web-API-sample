@@ -28,7 +28,6 @@ public class Data(DapperDbContext dbContext) : IRepository
                                  u.role = @role::role 
                                AND
                                  rt.token = @refreshToken
-                                 
                              """;
 
         using var connection = dbContext.CreateConnection();

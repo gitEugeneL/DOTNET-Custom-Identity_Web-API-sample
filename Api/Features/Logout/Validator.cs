@@ -1,7 +1,7 @@
 using Api.Features.Common;
 using FluentValidation;
 
-namespace Api.Features.Refresh;
+namespace Api.Features.Logout;
 
 public sealed class Validator : AbstractValidator<RefreshOrLogoutRequest>
 {

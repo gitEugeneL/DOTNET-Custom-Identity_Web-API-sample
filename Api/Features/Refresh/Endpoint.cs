@@ -19,8 +19,8 @@ public class Endpoint : IEndpoint
     }
 
     private static async Task<Results<ValidationProblem, Ok<LoginOrRefreshResponse>, BadRequest<string>>> HandleAsync(
-        RefreshRequest request,
-        IValidator<RefreshRequest> validator,
+        RefreshOrLogoutRequest request,
+        IValidator<RefreshOrLogoutRequest> validator,
         HttpContext httpContext,
         Data data,
         ITokenService tokenService,

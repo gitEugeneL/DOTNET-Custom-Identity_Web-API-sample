@@ -7,3 +7,5 @@ public sealed record LoginOrRefreshResponse(
     DateTime RefreshTokenExpires,
     string AccessTokenType = "Bearer"
 );
+
+public sealed record RefreshOrLogoutRequest(string UserId, string ClientRole);
