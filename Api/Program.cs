@@ -14,6 +14,7 @@ builder.Services
     .AddScoped<IPasswordService, PasswordService>()
     .AddScoped<ILockoutService, LockoutService>()
     .AddScoped<ITokenService, TokenService>()
+    .AddScoped<IMessageService, MessageService>()
     .AddOpenApi()
     .AddSingleton<DapperDbContext>()
     .AddRepoServices()
