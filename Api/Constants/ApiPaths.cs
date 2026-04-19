@@ -8,9 +8,9 @@ public static class ApiPaths
     public const string Login = Base + "/login";
     public const string Refresh = Base + "/refresh";
     public const string Logout = Base + "/logout";
+    public const string GenerateCode = Base + "/generate-code";
+    public const string ConfirmEmail = Base + "/confirm-email";
 
-
-    // public const string EmailConfirmation = Base + "/email-confirmation";
     // public const string ForgotPassword    = Base + "/forgot-password";
     // public const string ResetPassword     = Base + "/reset-password";
 }

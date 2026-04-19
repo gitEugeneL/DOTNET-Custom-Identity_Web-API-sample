@@ -15,10 +15,12 @@ builder.Services
     .AddScoped<ILockoutService, LockoutService>()
     .AddScoped<ITokenService, TokenService>()
     .AddScoped<IMessageService, MessageService>()
+    .AddScoped<IConfirmationService, ConfirmationService>()
     .AddOpenApi()
     .AddSingleton<DapperDbContext>()
     .AddRepoServices()
     .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
+    .AddRateLimitingServices()
     .AddEndpoints();
 
 var app = builder.Build();
@@ -29,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseRateLimiter();
 app.MapEndpoints();
 app.Run();
 

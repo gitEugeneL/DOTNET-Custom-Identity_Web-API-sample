@@ -6,6 +6,8 @@ public static class ApiMessages
 
     public const string InvalidToken = "user not found or token is invalid";
 
+    public const string InvalidConfirm = "user not found or account is locked";
+
     public static string ConflictResultMessage(string type, string value)
     {
         return $"{type}: '{value}' already exists";

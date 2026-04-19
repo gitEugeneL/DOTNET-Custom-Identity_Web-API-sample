@@ -2,6 +2,7 @@ using Api.Constants;
 using Api.Domain.Entities;
 using Api.Domain.Enums;
 using Api.Extensions.Interfaces;
+using Api.Services.Interfaces;
 using Api.Utils;
 using FluentValidation;
 using IdentityApi.Services.Interfaces;
@@ -21,6 +22,7 @@ public class Endpoint : IEndpoint
         RegistrationRequest request,
         IValidator<RegistrationRequest> validator,
         IPasswordService passwordService,
+        IMessageService messageService,
         Data data,
         CancellationToken ct)
     {

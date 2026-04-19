@@ -9,7 +9,7 @@ public static class CookieManager
 
     private static string GetRefreshCookieName(string roleName)
     {
-        return roleName == Policies.AdminRole ? AdminRefreshCookieName : CustomerRefreshCookieName;
+        return roleName == AuthPolicies.Admin ? AdminRefreshCookieName : CustomerRefreshCookieName;
     }
 
     public static void SetCookie(HttpContext context, string refreshToken, DateTime expires, string clientRole)

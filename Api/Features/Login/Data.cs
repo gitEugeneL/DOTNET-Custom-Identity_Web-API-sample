@@ -9,10 +9,6 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
 {
     public async Task<User?> GetUser(string email, CancellationToken ct)
     {
-        // TODO: Add additional checks:
-        // AND
-        //     email_confirmed = true
-
         const string query = """
                              SELECT 
                                id,
@@ -23,14 +19,12 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
                                login_failed_count AS loginFailedCount,
                                login_locked AS loginLocked,
                                login_lock_expires AS loginLockExpires,
-                               confirm_locked AS confirmLocked,
-                               confirm_lock_expires AS confirmLockExpires,
-                               confirm_failed_count AS confirmFailedCount,
-                               generate_code_count AS generateCodeCount,
                                role
                              FROM users u 
                              WHERE 
                                  email = @email 
+                               AND
+                                 email_confirmed = true
                              """;
 
         using var connection = dbContext.CreateConnection();
@@ -57,15 +51,15 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
 
         using var connection = dbContext.CreateConnection();
 
-        var command = new CommandDefinition(query, new
-        {
-            loginLocked = user.LoginLocked,
-            loginLockExpires = user.LoginLockExpires,
-            loginFailedCount = user.LoginFailedCount,
-            userId = user.Id
-        }, cancellationToken: ct);
-
-        await connection.ExecuteAsync(command);
+        await connection.ExecuteAsync(
+            new CommandDefinition(query, new
+            {
+                loginLocked = user.LoginLocked,
+                loginLockExpires = user.LoginLockExpires,
+                loginFailedCount = user.LoginFailedCount,
+                userId = user.Id
+            }, cancellationToken: ct)
+        );
     }
 
     public async Task AddRefreshToken(User user, RefreshToken refreshToken, CancellationToken ct)

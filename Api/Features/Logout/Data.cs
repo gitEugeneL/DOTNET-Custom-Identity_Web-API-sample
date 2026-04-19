@@ -4,7 +4,7 @@ using Dapper;
 
 namespace Api.Features.Logout;
 
-public class Data(DapperDbContext dbContext) : IRepository
+internal class Data(DapperDbContext dbContext) : IRepository
 {
     public async Task<bool> RemoveRefreshToken(Guid userId, string refreshToken, CancellationToken ct)
     {

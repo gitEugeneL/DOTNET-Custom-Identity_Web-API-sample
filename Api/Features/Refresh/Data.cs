@@ -6,7 +6,7 @@ using Dapper;
 
 namespace Api.Features.Refresh;
 
-public class Data(DapperDbContext dbContext) : IRepository
+internal class Data(DapperDbContext dbContext) : IRepository
 {
     public async Task<User?> GetUserByRefreshToken(Guid userId, Role role, string refreshToken, CancellationToken ct)
     {
@@ -14,8 +14,7 @@ public class Data(DapperDbContext dbContext) : IRepository
                              SELECT
                                  u.id,
                                  u.email,
-                                 u.role,
-                                 u.email_confirmed
+                                 u.role
                              FROM 
                                  users u
                              INNER JOIN 
@@ -25,6 +24,8 @@ public class Data(DapperDbContext dbContext) : IRepository
                              WHERE 
                                  u.id = @userId 
                                AND 
+                                u.email_confirmed 
+                               AND
                                  u.role = @role::role 
                                AND
                                  rt.token = @refreshToken
