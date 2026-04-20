@@ -32,18 +32,11 @@ public class Endpoint : IEndpoint
             return TypedResults.ValidationProblem(validationErrors);
 
         var user = await data.GetUser(Normalizer.NormalizeImportantString(request.Email), ct);
-
-        if (user is null || lockoutService.IsConfirmLocked(user))
+        if (user is null)
             return TypedResults.BadRequest(ApiMessages.InvalidConfirm);
 
-        user.GenerateCodeCount++;
-        await data.UpdateGenerateCodeCount(user, ct);
-
-        if (lockoutService.IsGenerateCodeAttemptLimitExceeded(user))
-        {
-            await data.UpdateConfirmLockout(user, ct);
-            return TypedResults.BadRequest(ApiMessages.InvalidConfirm);
-        }
+        lockoutService.ProcessForGenerateCode(user);
+        await data.UpdateGenerateCodeLockout(user, ct);
 
         var (code, expires) = confirmationService.GenerateCode();
         var confirmationCode = new ConfirmationCode

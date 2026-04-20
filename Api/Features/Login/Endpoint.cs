@@ -33,30 +33,22 @@ public class Endpoint : IEndpoint
             return TypedResults.ValidationProblem(validationErrors);
 
         var user = await data.GetUser(Normalizer.NormalizeImportantString(request.Email), ct);
-
-        if (user is null || lockoutService.IsLoginLocked(user))
+        if (user is null)
             return TypedResults.BadRequest(ApiMessages.InvalidAuth);
 
-        if (lockoutService.IsLoginAttemptLimitExceeded(user))
+        var isPasswordValid = passwordService.VerifyPasswordHash(request.Password, user.PwdHash, user.PwdSalt);
+        lockoutService.ProcessForLogin(user, isPasswordValid);
+        if (!isPasswordValid)
         {
             await data.UpdateLoginLockout(user, ct);
             return TypedResults.BadRequest(ApiMessages.InvalidAuth);
         }
-
-        if (!passwordService.VerifyPasswordHash(request.Password, user.PwdHash, user.PwdSalt))
-        {
-            user.LoginFailedCount++;
-            await data.UpdateLoginLockout(user, ct);
-            return TypedResults.BadRequest(ApiMessages.InvalidAuth);
-        }
-
-        lockoutService.ResetLoginLockout(user);
-        await data.UpdateLoginLockout(user, ct);
 
         var newAccessToken = tokenService.GenerateAccessToken(user);
         var newRefreshToken = tokenService.GenerateRefreshToken(user);
 
         await data.AddRefreshToken(user, newRefreshToken, ct);
+        await data.UpdateLoginLockout(user, ct);
 
         // set refresh token (secure cookie) 
         CookieManager.SetCookie(httpContext, newRefreshToken.Token, newRefreshToken.Expires, user.Role.ToString());

@@ -4,17 +4,9 @@ namespace Api.Services.Interfaces;
 
 public interface ILockoutService
 {
-    bool IsLoginLocked(User user);
+    void ProcessForGenerateCode(User user);
 
-    bool IsConfirmLocked(User user);
+    void ProcessForConfirm(User user, bool isCodeValid);
 
-    void ResetLoginLockout(User user);
-
-    void ResetConfirmLockout(User user);
-
-    bool IsLoginAttemptLimitExceeded(User user);
-
-    bool IsConfirmAttemptLimitExceeded(User user);
-
-    bool IsGenerateCodeAttemptLimitExceeded(User user);
+    void ProcessForLogin(User user, bool isPasswordValid);
 }

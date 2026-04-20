@@ -5,7 +5,7 @@ using Dapper;
 
 namespace Api.Features.GenerateCode;
 
-internal class Data(DapperDbContext dbContext) : IRepository
+internal class Data(DapperDbContext dbContext, IConfiguration configuration) : IRepository
 {
     public async Task<User?> GetUser(string email, CancellationToken ct)
     {
@@ -17,9 +17,15 @@ internal class Data(DapperDbContext dbContext) : IRepository
                                confirm_lock_expires AS confirmLockExpires,
                                confirm_failed_count AS confirmFailedCount,
                                generate_code_count AS generateCodeCount
-                             FROM users u 
+                             FROM users
                              WHERE 
-                                 email = @email 
+                                 email = @email  
+                               AND 
+                               (
+                                   confirm_lock_expires IS NULL 
+                                       OR 
+                                   confirm_lock_expires < now()
+                               )
                              """;
 
         using var connection = dbContext.CreateConnection();
@@ -27,40 +33,21 @@ internal class Data(DapperDbContext dbContext) : IRepository
         return await connection.QueryFirstOrDefaultAsync<User>(
             new CommandDefinition(
                 query,
-                new { email },
-                cancellationToken: ct)
-        );
-    }
-
-    public async Task UpdateGenerateCodeCount(User user, CancellationToken ct)
-    {
-        const string query = """
-                             UPDATE users
-                             SET
-                                generate_code_count = @generateCodeCount
-                             WHERE 
-                                 id = @userId
-                             """;
-
-        using var connection = dbContext.CreateConnection();
-        await connection.ExecuteAsync(
-            new CommandDefinition(query, new
+                new
                 {
-                    generateCodeCount = user.GenerateCodeCount,
-                    userId = user.Id
+                    email
                 },
                 cancellationToken: ct)
         );
     }
 
-    public async Task UpdateConfirmLockout(User user, CancellationToken ct)
+    public async Task UpdateGenerateCodeLockout(User user, CancellationToken ct)
     {
         const string query = """
                              UPDATE users
                              SET
                                 confirm_locked = @confirmLocked,
                                 confirm_lock_expires = @confirmLockExpires,
-                                confirm_failed_count = @confirmFailedCount,
                                 generate_code_count = @generateCodeCount
                              WHERE 
                                  id = @userId
@@ -73,7 +60,6 @@ internal class Data(DapperDbContext dbContext) : IRepository
                 {
                     confirmLocked = user.ConfirmLocked,
                     confirmLockExpires = user.ConfirmLockExpires,
-                    confirmFailedCount = user.ConfirmFailedCount,
                     generateCodeCount = user.GenerateCodeCount,
                     userId = user.Id
                 },

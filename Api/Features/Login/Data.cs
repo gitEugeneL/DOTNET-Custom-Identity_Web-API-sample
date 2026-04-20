@@ -20,11 +20,18 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
                                login_locked AS loginLocked,
                                login_lock_expires AS loginLockExpires,
                                role
-                             FROM users u 
+                             FROM 
+                                 users
                              WHERE 
                                  email = @email 
                                AND
                                  email_confirmed = true
+                               AND 
+                               (
+                                   login_lock_expires IS NULL 
+                                       OR 
+                                   login_lock_expires < now()
+                             )
                              """;
 
         using var connection = dbContext.CreateConnection();
