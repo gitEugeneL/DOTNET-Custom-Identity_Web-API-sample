@@ -3,25 +3,26 @@ using Api.Extensions.Interfaces;
 using Api.Services.Interfaces;
 using Api.Utils;
 using FluentValidation;
+using IdentityApi.Services.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Api.Features.ConfirmEmail;
+namespace Api.Features.ResetPassword;
 
 public class Endpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(ApiPaths.ConfirmEmail, HandleAsync)
+        app.MapPost(ApiPaths.ChangePassword, HandleAsync)
             .AllowAnonymous();
     }
 
-    private static async Task<Results<ValidationProblem, Ok<ConfirmEmailResponse>, BadRequest<string>>> HandleAsync(
-        ConfirmEmailRequest request,
-        IValidator<ConfirmEmailRequest> validator,
+    private static async Task<Results<ValidationProblem, Ok<ChangePasswordResponse>, BadRequest<string>>> HandleAsync(
+        ChangePasswordRequest request,
+        IValidator<ChangePasswordRequest> validator,
         ILockoutService lockoutService,
-        IConfirmationService confirmationService,
-        Common.Data commonData,
+        IPasswordService passwordService,
         Data data,
+        Common.Data commonData,
         CancellationToken ct
     )
     {
@@ -41,8 +42,12 @@ public class Endpoint : IEndpoint
             return TypedResults.BadRequest(ApiMessages.InvalidConfirm);
         }
 
-        await data.ConfirmUser(user, ct);
+        passwordService.CreatePasswordHash(request.Password, out var passwordHash, out var passwordSalt);
+        user.PwdHash = passwordHash;
+        user.PwdSalt = passwordSalt;
 
-        return TypedResults.Ok(new ConfirmEmailResponse(user.Email, true));
+        return await data.ChangePassword(user, ct)
+            ? TypedResults.Ok(new ChangePasswordResponse(user.Email, true))
+            : TypedResults.BadRequest(ApiMessages.InvalidConfirm);
     }
 }
