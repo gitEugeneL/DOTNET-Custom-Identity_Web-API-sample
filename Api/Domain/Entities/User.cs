@@ -5,7 +5,7 @@ namespace Api.Domain.Entities;
 
 public sealed class User : BaseAuditableEntity
 {
-    public required string Email { get; init; }
+    public required string Email { get; set; }
     public byte[] PwdHash { get; set; } = [];
     public byte[] PwdSalt { get; set; } = [];
 

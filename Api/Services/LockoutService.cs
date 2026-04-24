@@ -5,83 +5,94 @@ namespace Api.Services;
 
 public class LockoutService(IConfiguration configuration) : ILockoutService
 {
-    public bool IsLoginLocked(User user)
+    public void ProcessForGenerateCode(User user)
     {
-        return IsLocked(user, user.LoginLocked, user.LoginLockExpires, ResetLoginLockout);
-    }
+        var now = DateTime.UtcNow;
 
-    public bool IsConfirmLocked(User user)
-    {
-        return IsLocked(user, user.ConfirmLocked, user.ConfirmLockExpires, ResetConfirmLockout);
-    }
+        var maxAttempts = GetValue("Authentication:Code.MaxAttempts");
+        var lockoutMinutes = GetValue("Authentication:ConfirmLockout.Lifetime.Minutes");
 
-    public bool IsLoginAttemptLimitExceeded(User user)
-    {
-        return IsAttemptLimitExceeded(user, "LoginLockout", user.LoginFailedCount, SetLoginLockout);
-    }
+        ResetConfirmLockIfExpired(user, now);
 
-    public bool IsConfirmAttemptLimitExceeded(User user)
-    {
-        return IsAttemptLimitExceeded(user, "ConfirmLockout", user.ConfirmFailedCount, SetConfirmLockout);
-    }
+        user.GenerateCodeCount++;
 
-    public bool IsGenerateCodeAttemptLimitExceeded(User user)
-    {
-        return IsAttemptLimitExceeded(user, "Code", user.GenerateCodeCount, SetConfirmLockout);
-    }
+        if (user.GenerateCodeCount < maxAttempts)
+            return;
 
-    public void ResetLoginLockout(User user)
-    {
-        user.LoginLocked = false;
-        user.LoginLockExpires = null;
-        user.LoginFailedCount = 0;
-    }
-
-    public void ResetConfirmLockout(User user)
-    {
-        user.ConfirmLocked = false;
-        user.ConfirmLockExpires = null;
-        user.ConfirmFailedCount = 0;
-        user.GenerateCodeCount = 0;
-    }
-
-    private bool IsAttemptLimitExceeded(User user, string attemptType, int failedCount,
-        Action<User, int> setLockoutAction)
-    {
-        var maxAttempts = int.Parse(configuration[$"Authentication:{attemptType}.MaxAttempts"]!);
-        var minutes = int.Parse(configuration[$"Authentication:{attemptType}.Lifetime.Minutes"]!);
-
-        if (failedCount <= maxAttempts)
-            return false;
-
-        setLockoutAction(user, minutes);
-        return true;
-    }
-
-    private static void SetLoginLockout(User user, int minutes)
-    {
-        user.LoginLocked = true;
-        user.LoginLockExpires = DateTime.UtcNow.AddMinutes(minutes);
-    }
-
-    private static void SetConfirmLockout(User user, int minutes)
-    {
         user.ConfirmLocked = true;
-        user.ConfirmLockExpires = DateTime.UtcNow.AddMinutes(minutes);
+        user.ConfirmLockExpires = now.AddMinutes(lockoutMinutes);
     }
 
-    private static bool IsLocked(User user, bool isLocked, DateTime? lockExpires, Action<User> resetLockout)
+    public void ProcessForLogin(User user, bool isPasswordValid)
     {
-        switch (isLocked)
-        {
-            case true when lockExpires >= DateTime.UtcNow:
-                return true;
+        var now = DateTime.UtcNow;
 
-            case true when lockExpires < DateTime.UtcNow:
-                resetLockout(user);
-                break;
+        var maxAttempts = GetValue("Authentication:LoginLockout.MaxAttempts");
+        var lockoutMinutes = GetValue("Authentication:LoginLockout.Lifetime.Minutes");
+
+        ResetLoginLockIfExpired(user, now);
+
+        user.LoginFailedCount = isPasswordValid
+            ? 0
+            : user.LoginFailedCount + 1;
+
+        if (user.LoginFailedCount < maxAttempts)
+            return;
+
+        user.LoginLocked = true;
+        user.LoginLockExpires = now.AddMinutes(lockoutMinutes);
+    }
+
+    public void ProcessForConfirm(User user, bool isCodeValid)
+    {
+        var now = DateTime.UtcNow;
+
+        var maxAttempts = GetValue("Authentication:ConfirmLockout.MaxAttempts");
+        var lockoutMinutes = GetValue("Authentication:ConfirmLockout.Lifetime.Minutes");
+
+        ResetConfirmLockIfExpired(user, now);
+
+        if (isCodeValid)
+        {
+            user.GenerateCodeCount = 0;
+            user.ConfirmFailedCount = 0;
+            user.EmailConfirmed = true;
+            return;
         }
 
-        return false;
+        user.ConfirmFailedCount++;
+
+        if (user.ConfirmFailedCount < maxAttempts)
+            return;
+
+        user.ConfirmLocked = true;
+        user.ConfirmLockExpires = now.AddMinutes(lockoutMinutes);
+    }
+
+    private int GetValue(string key)
+    {
+        return int.Parse(configuration[key]
+                         ?? throw new ApplicationException($"{key} not found in configuration"));
+    }
+
+    private static void ResetLoginLockIfExpired(User user, DateTime now)
+    {
+        if (user is not { LoginLocked: true, LoginLockExpires: not null } || !(user.LoginLockExpires < now))
+            return;
+
+        user.LoginFailedCount = 0;
+        user.LoginLocked = false;
+        user.LoginLockExpires = null;
+    }
+
+    private static void ResetConfirmLockIfExpired(User user, DateTime now)
+    {
+        if (!user.ConfirmLocked || user.ConfirmLockExpires is null || !(user.ConfirmLockExpires < now))
+            return;
+
+        user.GenerateCodeCount = 0;
+        user.ConfirmFailedCount = 0;
+        user.ConfirmLocked = false;
+        user.ConfirmLockExpires = null;
     }
 }

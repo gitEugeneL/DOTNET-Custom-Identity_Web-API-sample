@@ -17,4 +17,8 @@ public static class ApiPaths
     public const string ConfirmEmail = Base + "/confirm-email";
 
     public const string ChangePassword = Base + "/change-password";
+
+    public const string ChangeEmail = Base + "/change-email";
+
+    public const string Info = Base + "/info";
 }

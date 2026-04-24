@@ -42,61 +42,6 @@ internal class Data(DapperDbContext dbContext) : IRepository
         );
     }
 
-    public async Task<bool> IsCodeValidThenRemove(Guid userId, string code, CancellationToken ct)
-    {
-        const string query = """
-                             DELETE FROM 
-                                        confirmation_codes
-                             WHERE 
-                                 user_id = @userID 
-                               AND
-                                 expires > now() 
-                               AND
-                                 code = @code
-                             """;
-
-        using var connection = dbContext.CreateConnection();
-
-        return await connection.ExecuteAsync(
-            new CommandDefinition(
-                query,
-                new
-                {
-                    userId,
-                    code
-                },
-                cancellationToken: ct
-            )
-        ) > 0;
-    }
-
-    public async Task UpdateConfirmLockout(User user, CancellationToken ct, bool isConfirm = false)
-    {
-        var query = """
-                    UPDATE 
-                        users
-                    SET
-                       confirm_locked = @confirmLocked,
-                       confirm_lock_expires = @confirmLockExpires,
-                       confirm_failed_count = @confirmFailedCount
-                    WHERE 
-                        id = @userId
-                    """;
-
-        using var connection = dbContext.CreateConnection();
-
-        await connection.ExecuteAsync(
-            new CommandDefinition(query, new
-                {
-                    confirmLocked = user.ConfirmLocked,
-                    confirmLockExpires = user.ConfirmLockExpires,
-                    confirmFailedCount = user.ConfirmFailedCount,
-                    userId = user.Id
-                },
-                cancellationToken: ct)
-        );
-    }
-
     public async Task ConfirmUser(User user, CancellationToken ct)
     {
         const string query = """
@@ -116,7 +61,9 @@ internal class Data(DapperDbContext dbContext) : IRepository
         using var connection = dbContext.CreateConnection();
 
         await connection.ExecuteAsync(
-            new CommandDefinition(query, new
+            new CommandDefinition(
+                query,
+                new
                 {
                     confirmLocked = user.ConfirmLocked,
                     confirmLockExpires = user.ConfirmLockExpires,

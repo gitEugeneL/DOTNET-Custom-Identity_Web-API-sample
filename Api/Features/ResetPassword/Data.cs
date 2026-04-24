@@ -63,7 +63,9 @@ internal class Data(DapperDbContext dbContext) : IRepository
         using var connection = dbContext.CreateConnection();
 
         return await connection.ExecuteAsync(
-            new CommandDefinition(query, new
+            new CommandDefinition(
+                query,
+                new
                 {
                     pwdHash = user.PwdHash,
                     pwdSalt = user.PwdSalt,

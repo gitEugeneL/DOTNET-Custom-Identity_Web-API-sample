@@ -24,8 +24,6 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
                                  users
                              WHERE 
                                  email = @email 
-                               AND
-                                 email_confirmed = true
                                AND 
                                (
                                    login_lock_expires IS NULL 

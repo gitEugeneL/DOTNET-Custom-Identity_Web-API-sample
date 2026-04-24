@@ -15,7 +15,8 @@ public class Endpoint : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(ApiPaths.Login, HandleAsync)
-            .AllowAnonymous();
+            .AllowAnonymous()
+            .RequireRateLimiting(RateLimitPolicies.BasePolicy);
     }
 
     private static async Task<Results<ValidationProblem, Ok<LoginOrRefreshResponse>, BadRequest<string>>> HandleAsync(

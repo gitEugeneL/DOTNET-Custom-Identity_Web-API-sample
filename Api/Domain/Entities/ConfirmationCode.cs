@@ -4,8 +4,8 @@ namespace Api.Domain.Entities;
 
 public sealed class ConfirmationCode : BaseEntity
 {
-    public required string Code { get; set; }
-    public required DateTime Expires { get; set; }
+    public required string Code { get; init; }
+    public required DateTime Expires { get; init; }
 
     /*** Relations ***/
     public required Guid UserId { get; init; }

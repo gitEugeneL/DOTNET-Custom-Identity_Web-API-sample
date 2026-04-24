@@ -13,7 +13,7 @@ public static class RateLimitExtension
 
             options.AddFixedWindowLimiter(RateLimitPolicies.BasePolicy, limiterOptions =>
             {
-                limiterOptions.PermitLimit = 3;
+                limiterOptions.PermitLimit = 1;
                 limiterOptions.Window = TimeSpan.FromSeconds(1);
                 limiterOptions.QueueLimit = 0;
                 limiterOptions.AutoReplenishment = true;

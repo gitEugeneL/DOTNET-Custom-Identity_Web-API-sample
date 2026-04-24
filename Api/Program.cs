@@ -23,6 +23,9 @@ builder.Services
     .AddRateLimitingServices()
     .AddEndpoints();
 
+builder.Services.ConfigureAuthentication(builder.Configuration);
+builder.Services.ConfigureAuthPolicy();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

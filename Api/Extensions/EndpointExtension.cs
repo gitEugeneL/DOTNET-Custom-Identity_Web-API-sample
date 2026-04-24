@@ -3,7 +3,7 @@ using Api.Extensions.Interfaces;
 
 namespace Api.Extensions;
 
-public static class EndpointExtensions
+public static class EndpointExtension
 {
     public static IServiceCollection AddEndpoints(this IServiceCollection services)
     {

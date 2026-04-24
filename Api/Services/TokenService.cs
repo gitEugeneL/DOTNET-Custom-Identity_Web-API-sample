@@ -20,9 +20,12 @@ public class TokenService(IConfiguration configuration) : ITokenService
             new("isEmailConfirmed", user.EmailConfirmed.ToString())
         };
 
-        var settings = configuration["Authentication:AccessToken.SecurityKey"]!;
+        var settings = configuration["Authentication:AccessToken.SecurityKey"] ??
+                       throw new ApplicationException("SecurityKey not found in configuration");
+
         var expires =
-            DateTime.UtcNow.AddMinutes(int.Parse(configuration["Authentication:AccessToken.Lifetime.Minutes"]!));
+            DateTime.UtcNow.AddMinutes(int.Parse(configuration["Authentication:AccessToken.Lifetime.Minutes"] ??
+                                                 throw new ApplicationException("Lifetime not found in config")));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -43,11 +46,13 @@ public class TokenService(IConfiguration configuration) : ITokenService
 
     public RefreshToken GenerateRefreshToken(User user)
     {
+        var lifetimeDays = int.Parse(configuration["Authentication:RefreshToken.Lifetime.Days"] ??
+                                     throw new ApplicationException("RefreshTokenLifetime not found in config"));
+
         return new RefreshToken
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(265)),
-            Expires = DateTime.UtcNow.AddDays(
-                int.Parse(configuration["Authentication:RefreshToken.Lifetime.Days"]!)),
+            Expires = DateTime.UtcNow.AddDays(lifetimeDays),
             UserId = user.Id
         };
     }
