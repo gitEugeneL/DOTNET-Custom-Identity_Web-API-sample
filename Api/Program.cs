@@ -20,7 +20,7 @@ builder.Services
     .AddSingleton<DapperDbContext>()
     .AddRepoServices()
     .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
-    .AddRateLimitingServices()
+    .AddRateLimitingServices(builder.Configuration)
     .AddEndpoints();
 
 builder.Services.ConfigureAuthentication(builder.Configuration);

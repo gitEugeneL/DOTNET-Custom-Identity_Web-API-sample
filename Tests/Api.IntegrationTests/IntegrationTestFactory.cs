@@ -1,7 +1,9 @@
+using Api.IntegrationTests.Seeders;
 using Dapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
 using Testcontainers.PostgreSql;
@@ -17,16 +19,16 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLi
         .WithCleanUp(true)
         .Build();
 
-    private string _connectionString = null!;
-
     private Respawner _respawner = null!;
+
+    public string ConnectionString = null!;
 
     public async Task InitializeAsync()
     {
         await _db.StartAsync();
-        _connectionString = _db.GetConnectionString();
+        ConnectionString = _db.GetConnectionString();
 
-        await using var connection = new NpgsqlConnection(_connectionString);
+        await using var connection = new NpgsqlConnection(ConnectionString);
         await connection.OpenAsync();
 
         var sql = await File.ReadAllTextAsync(
@@ -45,18 +47,21 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLi
         await _db.StopAsync();
     }
 
+    public async Task ResetDatabaseAsync()
+    {
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync();
+        await _respawner.ResetAsync(connection);
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureAppConfiguration((_, cfg) =>
             cfg.AddInMemoryCollection([
-                new KeyValuePair<string, string?>("ConnectionStrings:PSQL", _connectionString)
+                new KeyValuePair<string, string?>("ConnectionStrings:PSQL", ConnectionString),
+                new KeyValuePair<string, string?>("RateLimiting:BasePermitLimit", "999999")
             ]));
-    }
 
-    public async Task ResetDatabaseAsync()
-    {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
-        await _respawner.ResetAsync(connection);
+        builder.ConfigureServices(services => { services.AddScoped<UserSeeder>(); });
     }
 }

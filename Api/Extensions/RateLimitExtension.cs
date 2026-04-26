@@ -5,7 +5,9 @@ namespace Api.Extensions;
 
 public static class RateLimitExtension
 {
-    public static IServiceCollection AddRateLimitingServices(this IServiceCollection services)
+    public static IServiceCollection AddRateLimitingServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddRateLimiter(options =>
         {
@@ -13,7 +15,9 @@ public static class RateLimitExtension
 
             options.AddFixedWindowLimiter(RateLimitPolicies.BasePolicy, limiterOptions =>
             {
-                limiterOptions.PermitLimit = 1;
+                limiterOptions.PermitLimit = int.Parse(configuration["RateLimiting:BasePermitLimit"] ??
+                                                       throw new ApplicationException(
+                                                           "RateLimiting:BasePermitLimit not found in configuration"));
                 limiterOptions.Window = TimeSpan.FromSeconds(1);
                 limiterOptions.QueueLimit = 0;
                 limiterOptions.AutoReplenishment = true;

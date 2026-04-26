@@ -4,8 +4,8 @@ namespace Api.Tools;
 
 public static class CookieManager
 {
-    private const string AdminRefreshCookieName = "refreshTokenAdmin";
-    private const string CustomerRefreshCookieName = "refreshTokenCustomer";
+    public const string AdminRefreshCookieName = "refreshTokenAdmin";
+    public const string CustomerRefreshCookieName = "refreshTokenCustomer";
 
     private static string GetRefreshCookieName(string roleName)
     {

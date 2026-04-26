@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Api.Constants;
 using Api.Domain.Entities;
 using Api.Features.Registration;
+using Api.IntegrationTests.TestData;
 
 namespace Api.IntegrationTests.Features;
 
@@ -11,13 +12,11 @@ public class RegistrationTests(ApiWebApplicationFactory factory) : IClassFixture
     private readonly HttpClient _client = factory.CreateClient();
 
     [Theory]
-    [InlineData("mailt@mail.test", "strongPwd!1", "strongPwd!1")]
-    [InlineData("mail1@mail.test", "myPassword12@", "myPassword12@")]
-    public async Task Registration_WithValidData_ReturnsCreatedResultWithUserId
-        (string email, string password, string confirmPassword)
+    [ClassData(typeof(UserData))]
+    public async Task Registration_WithValidData_ReturnsCreatedResultWithUserId(TestUser user)
     {
         // Arrange
-        var request = new RegistrationRequest(email, password, confirmPassword);
+        var request = new RegistrationRequest(user.Email, user.Password, user.Password);
 
         // Act
         var response = await _client.PostAsJsonAsync(ApiPaths.Registration, request);
@@ -31,24 +30,21 @@ public class RegistrationTests(ApiWebApplicationFactory factory) : IClassFixture
     }
 
     [Theory]
-    [InlineData("mailt@mail.test", "strongPwd!1", "strongPwd!1")]
-    [InlineData("mail1@mail.test", "myPassword12@", "myPassword12@")]
-    public async Task Registration_WithConflictEmail_ReturnsConflictResultWithConflictMessage
-        (string email, string password, string confirmPassword)
+    [ClassData(typeof(UserData))]
+    public async Task Registration_WithConflictEmail_ReturnsConflictResultWithConflictMessage(TestUser user)
     {
         // Arrange
-        var request = new RegistrationRequest(email, password, confirmPassword);
+        await factory.SeedUser(user);
+        var request = new RegistrationRequest(user.Email, user.Password, user.Password);
 
         // Act
-        var response = new HttpResponseMessage();
-        for (var i = 0; i < 2; i++)
-            response = await _client.PostAsJsonAsync(ApiPaths.Registration, request);
+        var response = await _client.PostAsJsonAsync(ApiPaths.Registration, request);
 
         // Assert
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
 
         var result = await response.Content.ReadFromJsonAsync<string>();
-        Assert.Equal(ApiMessages.ConflictResultMessage(nameof(User), email), result);
+        Assert.Equal(ApiMessages.ConflictResultMessage(nameof(User), user.Email), result);
     }
 }

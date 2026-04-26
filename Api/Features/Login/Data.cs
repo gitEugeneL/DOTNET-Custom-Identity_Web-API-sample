@@ -19,7 +19,7 @@ internal class Data(DapperDbContext dbContext, IConfiguration configuration) : I
                                login_failed_count AS loginFailedCount,
                                login_locked AS loginLocked,
                                login_lock_expires AS loginLockExpires,
-                               role
+                               role::text AS role
                              FROM 
                                  users
                              WHERE 
