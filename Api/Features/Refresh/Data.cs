@@ -14,7 +14,7 @@ internal class Data(DapperDbContext dbContext) : IRepository
                              SELECT
                                  u.id,
                                  u.email,
-                                 u.role
+                                 role::text AS role
                              FROM 
                                  users u
                              INNER JOIN 
@@ -24,7 +24,7 @@ internal class Data(DapperDbContext dbContext) : IRepository
                              WHERE 
                                  u.id = @userId 
                                AND 
-                                u.email_confirmed 
+                                u.email_confirmed = true
                                AND
                                  u.role = @role::role 
                                AND

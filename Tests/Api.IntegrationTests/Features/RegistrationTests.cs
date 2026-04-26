@@ -7,10 +7,9 @@ using Api.IntegrationTests.TestData;
 
 namespace Api.IntegrationTests.Features;
 
-public class RegistrationTests(ApiWebApplicationFactory factory) : IClassFixture<ApiWebApplicationFactory>
+public class RegistrationTests(ApiWebApplicationFactory factory)
+    : IntegrationTestBase(factory), IClassFixture<ApiWebApplicationFactory>
 {
-    private readonly HttpClient _client = factory.CreateClient();
-
     [Theory]
     [ClassData(typeof(UserData))]
     public async Task Registration_WithValidData_ReturnsCreatedResultWithUserId(TestUser user)
@@ -19,7 +18,7 @@ public class RegistrationTests(ApiWebApplicationFactory factory) : IClassFixture
         var request = new RegistrationRequest(user.Email, user.Password, user.Password);
 
         // Act
-        var response = await _client.PostAsJsonAsync(ApiPaths.Registration, request);
+        var response = await Client.PostAsJsonAsync(ApiPaths.Registration, request);
 
         // Assert
         Assert.NotNull(response);
@@ -34,11 +33,11 @@ public class RegistrationTests(ApiWebApplicationFactory factory) : IClassFixture
     public async Task Registration_WithConflictEmail_ReturnsConflictResultWithConflictMessage(TestUser user)
     {
         // Arrange
-        await factory.SeedUser(user);
+        await Factory.SeedUser(user);
         var request = new RegistrationRequest(user.Email, user.Password, user.Password);
 
         // Act
-        var response = await _client.PostAsJsonAsync(ApiPaths.Registration, request);
+        var response = await Client.PostAsJsonAsync(ApiPaths.Registration, request);
 
         // Assert
         Assert.NotNull(response);

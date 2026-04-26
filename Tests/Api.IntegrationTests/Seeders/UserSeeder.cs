@@ -14,8 +14,8 @@ public class UserSeeder(IPasswordService passwordService, IConfiguration configu
         passwordService.CreatePasswordHash(user.Password, out var hash, out var salt);
 
         const string query = """
-                             INSERT INTO users (email, pwd_hash, pwd_salt, role)
-                             VALUES (@email, @pwd_hash, @pwd_salt, @role::role)
+                             INSERT INTO users (email, pwd_hash, pwd_salt, email_confirmed, role)
+                             VALUES (@email, @pwd_hash, @pwd_salt, @email_confirmed, @role::role)
                              ON CONFLICT (email) DO NOTHING
                              RETURNING id
                              """;
@@ -28,6 +28,7 @@ public class UserSeeder(IPasswordService passwordService, IConfiguration configu
                 email = Normalizer.NormalizeImportantString(user.Email),
                 pwd_hash = hash,
                 pwd_salt = salt,
+                email_confirmed = user.EmailConfirmed,
                 role = user.Role.ToString()
             }
         );

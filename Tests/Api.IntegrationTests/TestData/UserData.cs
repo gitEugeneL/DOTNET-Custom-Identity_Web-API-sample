@@ -6,6 +6,7 @@ namespace Api.IntegrationTests.TestData;
 public sealed record TestUser(
     string Email,
     string Password,
+    bool EmailConfirmed = false,
     Role Role = Role.Customer
 );
 
@@ -13,7 +14,7 @@ public class UserData : IEnumerable<object[]>
 {
     private static readonly List<TestUser> Users =
     [
-        new("dev@dev.com", "devDev123!", Role.Admin),
+        new("dev@dev.com", "devDev123!", false, Role.Admin),
         new("mailt@mail.test", "strongPwd!1"),
         new("mail1@mail.test", "myPassword12@"),
         new("user@example.com", "SecurePass123!"),

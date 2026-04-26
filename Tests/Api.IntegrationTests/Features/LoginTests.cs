@@ -9,24 +9,22 @@ using Api.Tools;
 
 namespace Api.IntegrationTests.Features;
 
-public class LoginTests(ApiWebApplicationFactory factory) : IClassFixture<ApiWebApplicationFactory>
+public class LoginTests(ApiWebApplicationFactory factory)
+    : IntegrationTestBase(factory), IClassFixture<ApiWebApplicationFactory>
 {
-    private readonly HttpClient _client = factory.CreateClient();
-
-
     [Theory]
     [ClassData(typeof(UserData))]
     public async Task Login_WithValidData_ReturnsOkResultWitAccessTokenAndSetSecureCookieWithRefreshToken(TestUser user)
     {
         // Arrange
-        var accessTokenMinutes = factory.GetRequiredConfig<int>("Authentication:AccessToken.Lifetime.Minutes");
-        var refreshTokenDays = factory.GetRequiredConfig<int>("Authentication:RefreshToken.Lifetime.Days");
+        var accessTokenMinutes = Factory.GetRequiredConfig<int>("Authentication:AccessToken.Lifetime.Minutes");
+        var refreshTokenDays = Factory.GetRequiredConfig<int>("Authentication:RefreshToken.Lifetime.Days");
 
-        var userId = await factory.SeedUser(user);
+        var userId = await Factory.SeedUser(user);
         var request = new LoginRequest(user.Email, user.Password);
 
         // Act
-        var response = await _client.PostAsJsonAsync(ApiPaths.Login, request);
+        var response = await Client.PostAsJsonAsync(ApiPaths.Login, request);
 
         // Assert
         var result = await response.Content.ReadFromJsonAsync<LoginOrRefreshResponse>();
@@ -69,7 +67,7 @@ public class LoginTests(ApiWebApplicationFactory factory) : IClassFixture<ApiWeb
         var request = new LoginRequest(user.Email, user.Password);
 
         // Act
-        var response = await _client.PostAsJsonAsync(ApiPaths.Login, request);
+        var response = await Client.PostAsJsonAsync(ApiPaths.Login, request);
 
         // Assert
         Assert.NotNull(response.Content);
@@ -86,13 +84,13 @@ public class LoginTests(ApiWebApplicationFactory factory) : IClassFixture<ApiWeb
     public async Task Login_WithValidUserAndInvalidPassword_ReturnsBadRequestAndErrorMessage(TestUser user)
     {
         // Arrange
-        await factory.SeedUser(user);
+        await Factory.SeedUser(user);
 
         user = user with { Password = "invalidPassword123!" };
         var request = new LoginRequest(user.Email, user.Password);
 
         // Act
-        var response = await _client.PostAsJsonAsync(ApiPaths.Login, request);
+        var response = await Client.PostAsJsonAsync(ApiPaths.Login, request);
 
         // Assert
         Assert.NotNull(response.Content);
@@ -109,17 +107,17 @@ public class LoginTests(ApiWebApplicationFactory factory) : IClassFixture<ApiWeb
     public async Task Login_WithValidUserAndMultipleInvalidAttempts_ReturnsBadRequestAndErrorMessage(TestUser user)
     {
         // Arrange
-        var loginMaxAttempts = factory.GetRequiredConfig<int>("Authentication:LoginLockout.MaxAttempts");
+        var loginMaxAttempts = Factory.GetRequiredConfig<int>("Authentication:LoginLockout.MaxAttempts");
 
-        await factory.SeedUser(user);
+        await Factory.SeedUser(user);
 
         for (var i = 0; i <= loginMaxAttempts; i++)
-            await _client.PostAsJsonAsync(ApiPaths.Login, new LoginRequest(user.Email, "invalidPwd123!"));
+            await Client.PostAsJsonAsync(ApiPaths.Login, new LoginRequest(user.Email, "invalidPwd123!"));
 
         var request = new LoginRequest(user.Email, user.Password);
 
         // Act
-        var response = await _client.PostAsJsonAsync(ApiPaths.Login, request);
+        var response = await Client.PostAsJsonAsync(ApiPaths.Login, request);
 
         // Assert
         Assert.NotNull(response.Content);
