@@ -1,4 +1,6 @@
+using Api.IntegrationTests.FakeServices;
 using Api.IntegrationTests.Seeders;
+using Api.Services.Interfaces;
 using Dapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -58,10 +60,20 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLi
     {
         builder.ConfigureAppConfiguration((_, cfg) =>
             cfg.AddInMemoryCollection([
+                // Add the connection string to the test database
                 new KeyValuePair<string, string?>("ConnectionStrings:PSQL", ConnectionString),
+
+                // Disable rate limiting (fake permitLimit)
                 new KeyValuePair<string, string?>("RateLimiting:BasePermitLimit", "999999")
             ]));
 
-        builder.ConfigureServices(services => { services.AddScoped<UserSeeder>(); });
+        builder.ConfigureServices(services =>
+        {
+            // Add UserSeeder to the DI container for tests
+            services.AddScoped<UserSeeder>();
+
+            // Add fake confirmation service (generate confirm code)
+            services.AddScoped<IConfirmationService, FakeConfirmationService>();
+        });
     }
 }
