@@ -14,7 +14,7 @@ public class Endpoint : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(ApiPaths.ChangeEmail, HandleAsync)
-            .RequireAuthorization(AuthPolicies.CustomerPolicy);
+            .RequireAuthorization(AuthPolicies.BasePolicy);
     }
 
     private static async
