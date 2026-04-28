@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{91
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.IntegrationTests", "Tests\Api.IntegrationTests\Api.IntegrationTests.csproj", "{64E6D547-E218-4A4A-B173-9892C9846780}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Tests", "Tests\Api.Tests\Api.Tests.csproj", "{6096EDFC-CD22-4C03-85B0-923447FDE4B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,8 +45,13 @@ Global
 		{64E6D547-E218-4A4A-B173-9892C9846780}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64E6D547-E218-4A4A-B173-9892C9846780}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64E6D547-E218-4A4A-B173-9892C9846780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6096EDFC-CD22-4C03-85B0-923447FDE4B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6096EDFC-CD22-4C03-85B0-923447FDE4B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6096EDFC-CD22-4C03-85B0-923447FDE4B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6096EDFC-CD22-4C03-85B0-923447FDE4B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{64E6D547-E218-4A4A-B173-9892C9846780} = {CB162BBB-3EF2-415B-8677-DB6BF3273B8C}
+		{6096EDFC-CD22-4C03-85B0-923447FDE4B8} = {CB162BBB-3EF2-415B-8677-DB6BF3273B8C}
 	EndGlobalSection
 EndGlobal
