@@ -5,8 +5,8 @@ namespace Api.IntegrationTests.FakeServices;
 
 public class FakeConfirmationService(IConfiguration configuration) : IConfirmationService
 {
-    public const char ValidFakeCodeChar = '1';
-    public const char InvalidFakeCodeChar = '0';
+    public const char ValidFakeCode = '1';
+    public const char InvalidFakeCode = '0';
 
     public (string code, DateTime expires) GenerateCode()
     {
@@ -18,7 +18,7 @@ public class FakeConfirmationService(IConfiguration configuration) : IConfirmati
                       throw new ApplicationException("Code.Lifetime.Minutes not found in configuration")));
 
         // fake code generation
-        var fakeCode = new string(Enumerable.Repeat(ValidFakeCodeChar, codeLength).ToArray());
+        var fakeCode = new string(Enumerable.Repeat(ValidFakeCode, codeLength).ToArray());
 
         return (fakeCode, expires);
     }

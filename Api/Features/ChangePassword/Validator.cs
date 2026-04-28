@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Api.Features.ResetPassword;
+namespace Api.Features.ChangePassword;
 
 public class Validator : AbstractValidator<ChangePasswordRequest>
 {

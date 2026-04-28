@@ -1,4 +1,4 @@
-namespace Api.Features.ResetPassword;
+namespace Api.Features.ChangePassword;
 
 public sealed record ChangePasswordRequest(
     string Email,

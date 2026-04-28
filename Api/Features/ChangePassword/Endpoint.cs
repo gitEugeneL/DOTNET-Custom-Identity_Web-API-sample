@@ -6,7 +6,7 @@ using FluentValidation;
 using IdentityApi.Services.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Api.Features.ResetPassword;
+namespace Api.Features.ChangePassword;
 
 public class Endpoint : IEndpoint
 {

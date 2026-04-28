@@ -3,7 +3,7 @@ using Api.Domain.Entities;
 using Api.Extensions.Interfaces;
 using Dapper;
 
-namespace Api.Features.ResetPassword;
+namespace Api.Features.ChangePassword;
 
 internal class Data(DapperDbContext dbContext) : IRepository
 {
