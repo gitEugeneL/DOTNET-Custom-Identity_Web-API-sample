@@ -10,18 +10,26 @@ public class Endpoint : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(ApiPaths.Info, HandleAsync)
-            .RequireAuthorization(AuthPolicies.BasePolicy);
+            .RequireAuthorization(AuthPolicies.BasePolicy)
+            .RequireRateLimiting(RateLimitPolicies.BasePolicy);
     }
 
-    private static async Task<Results<UnauthorizedHttpResult, Ok<string>>> HandleAsync(
+    private static async Task<Results<UnauthorizedHttpResult, Ok<UserInfoResponse>>> HandleAsync(
         HttpContext httpContext,
+        Data data,
         CancellationToken ct)
     {
         var userId = JwtReader.ReadUserId(httpContext);
-        var role = JwtReader.ReadUserRole(httpContext);
+        if (userId is null)
+            return TypedResults.Unauthorized();
 
-        return userId is null || role is null
-            ? TypedResults.Unauthorized()
-            : TypedResults.Ok($"user id: {userId} and role: {role}");
+        var user = await data.GetUser(userId.Value, ct);
+        return user is not null
+            ? TypedResults.Ok(new UserInfoResponse(
+                user.Email,
+                user.ConfirmLocked,
+                user.EmailConfirmed,
+                user.ConfirmLockExpires))
+            : TypedResults.Unauthorized();
     }
 }
