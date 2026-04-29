@@ -3,6 +3,20 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4ab0a545_002Dae99_002D45a0_002D803d_002D0ead452b8a0e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ProcessForConfirm_ShouldLock_WhenMaxAttemptsReached" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Services.LockoutServiceTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.RegistrationRequestTests.ValidRegistrationCommand&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.RegistrationRequestTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.LoginRequestTests.ValidLoginCommand_PassesValidation&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.LoginRequestTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.ChangeEmailRequestTests.ValidChangePasswordRequest_PassesValidation&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.ChangeEmailRequestTests.InvalidChangePasswordRequest_FailsValidation&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.ChangeEmailRequestTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.ChangePasswordRequestTests.ValidResetPasswordRequest_PassesValidation&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.ChangePasswordRequestTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.ConfirmEmailTests.ValidConfirmEmailRequest_PassesValidation&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.ConfirmEmailTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.GenerateCodeTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.LogoutRequestTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::6096EDFC-CD22-4C03-85B0-923447FDE4B8::net10.0::Api.Tests.Features.RefreshRequestTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

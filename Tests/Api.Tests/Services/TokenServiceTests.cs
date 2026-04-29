@@ -8,25 +8,18 @@ namespace Api.Tests.Services;
 
 public class TokenServiceTests
 {
-    private const int AccessTokenLifeTimeMinutes = 10;
-    private const int RefreshTokenLifeTimeDays = 30;
-    private const int RefreshTokenMaxCount = 5;
-    private const string AccessTokenSecurityKey = "OnlyDevSecurityKey123456789_DONT_USE_DONT_USE_DONT_USE_DONT_USE_!!";
-    private const string Issuer = "TestIssuer";
-    private const string Audience = "TestAudience";
-
     private readonly IConfiguration _configuration;
 
     public TokenServiceTests()
     {
         var configurationSettings = new Dictionary<string, string?>
         {
-            { "Authentication:AccessToken.SecurityKey", AccessTokenSecurityKey },
-            { "Authentication:AccessToken.Lifetime.Minutes", AccessTokenLifeTimeMinutes.ToString() },
-            { "Authentication:RefreshToken.Lifetime.Days", RefreshTokenLifeTimeDays.ToString() },
-            { "Authentication:RefreshToken.MaxCount", RefreshTokenMaxCount.ToString() },
-            { "Authentication:Issuer", Issuer },
-            { "Authentication:Audience", Audience }
+            { "Authentication:AccessToken.SecurityKey", TestHelpers.AccessTokenSecurityKey },
+            { "Authentication:AccessToken.Lifetime.Minutes", TestHelpers.AccessTokenLifeTimeMinutes.ToString() },
+            { "Authentication:RefreshToken.Lifetime.Days", TestHelpers.RefreshTokenLifeTimeDays.ToString() },
+            { "Authentication:RefreshToken.MaxCount", TestHelpers.RefreshTokenMaxCount.ToString() },
+            { "Authentication:Issuer", TestHelpers.Issuer },
+            { "Authentication:Audience", TestHelpers.Audience }
         };
 
         _configuration = new ConfigurationBuilder()
@@ -57,7 +50,8 @@ public class TokenServiceTests
 
         // Assert
         Assert.NotNull(token);
-        var difference = Math.Abs((expires - DateTime.UtcNow.AddMinutes(AccessTokenLifeTimeMinutes)).TotalSeconds);
+        var difference = Math.Abs((expires - DateTime
+            .UtcNow.AddMinutes(TestHelpers.AccessTokenLifeTimeMinutes)).TotalSeconds);
         Assert.True(difference < 3);
 
         var accessToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
@@ -72,8 +66,8 @@ public class TokenServiceTests
         Assert.Equal(user.EmailConfirmed.ToString(), tokenEmailConfirmed);
 
 
-        Assert.Equal(Issuer, accessToken.Issuer);
-        Assert.Equal(Audience, accessToken.Audiences.First());
+        Assert.Equal(TestHelpers.Issuer, accessToken.Issuer);
+        Assert.Equal(TestHelpers.Audience, accessToken.Audiences.First());
     }
 
     [Theory]
@@ -104,7 +98,7 @@ public class TokenServiceTests
         Assert.False(string.IsNullOrWhiteSpace(refreshToken.Token));
         Assert.Equal(265, Convert.FromBase64String(refreshToken.Token).Length);
 
-        var expectedExpires = DateTime.UtcNow.AddDays(RefreshTokenLifeTimeDays);
+        var expectedExpires = DateTime.UtcNow.AddDays(TestHelpers.RefreshTokenLifeTimeDays);
         var diff = Math.Abs((refreshToken.Expires - expectedExpires).TotalSeconds);
 
         Assert.True(diff < 3);

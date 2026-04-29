@@ -5,17 +5,14 @@ namespace Api.Tests.Services;
 
 public class ConfirmationServiceTests
 {
-    private const int CodeLength = 6;
-    private const int CodeLifeTimeMinutes = 5;
-
     private readonly IConfiguration _configuration;
 
     public ConfirmationServiceTests()
     {
         var configurationSettings = new Dictionary<string, string?>
         {
-            { "Authentication:Code.Length", CodeLength.ToString() },
-            { "Authentication:Code.Lifetime.Minutes", CodeLifeTimeMinutes.ToString() }
+            { "Authentication:Code.Length", TestHelpers.CodeLength.ToString() },
+            { "Authentication:Code.Lifetime.Minutes", TestHelpers.CodeLifeTimeMinutes.ToString() }
         };
 
         _configuration = new ConfigurationBuilder()
@@ -34,7 +31,7 @@ public class ConfirmationServiceTests
 
         // Assert
         Assert.True(code.All(char.IsDigit));
-        Assert.True(code.Length == CodeLength);
+        Assert.True(code.Length == TestHelpers.CodeLength);
     }
 
     [Fact]
@@ -47,7 +44,7 @@ public class ConfirmationServiceTests
         var (_, expires) = service.GenerateCode();
 
         // Assert
-        var difference = Math.Abs((expires - DateTime.UtcNow.AddMinutes(CodeLifeTimeMinutes)).TotalSeconds);
+        var difference = Math.Abs((expires - DateTime.UtcNow.AddMinutes(TestHelpers.CodeLifeTimeMinutes)).TotalSeconds);
         Assert.True(difference < 3);
     }
 }

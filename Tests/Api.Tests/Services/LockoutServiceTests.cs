@@ -7,28 +7,17 @@ namespace Api.Tests.Services;
 
 public class LockoutServiceTests
 {
-    private const int CodeMaxAttempts = 5;
-
-    private const int ConfirmMaxAttempts = 5;
-
-    private const int LoginMaxAttempts = 5;
-
-    private const int ConfirmLockoutLifetimeMinutes = 10;
-
-    private const int LoginLockoutLifetimeMinutes = 10;
-
-
     private readonly IConfiguration _configuration;
 
     public LockoutServiceTests()
     {
         var configurationSettings = new Dictionary<string, string?>
         {
-            { "Authentication:Code.MaxAttempts", CodeMaxAttempts.ToString() },
-            { "Authentication:ConfirmLockout.Lifetime.Minutes", ConfirmLockoutLifetimeMinutes.ToString() },
-            { "Authentication:LoginLockout.MaxAttempts", LoginMaxAttempts.ToString() },
-            { "Authentication:LoginLockout.Lifetime.Minutes", LoginLockoutLifetimeMinutes.ToString() },
-            { "Authentication:ConfirmLockout.MaxAttempts", ConfirmMaxAttempts.ToString() }
+            { "Authentication:Code.MaxAttempts", TestHelpers.CodeMaxAttempts.ToString() },
+            { "Authentication:ConfirmLockout.Lifetime.Minutes", TestHelpers.ConfirmLockoutLifetimeMinutes.ToString() },
+            { "Authentication:LoginLockout.MaxAttempts", TestHelpers.LoginMaxAttempts.ToString() },
+            { "Authentication:LoginLockout.Lifetime.Minutes", TestHelpers.LoginLockoutLifetimeMinutes.ToString() },
+            { "Authentication:ConfirmLockout.MaxAttempts", TestHelpers.ConfirmMaxAttempts.ToString() }
         };
 
         _configuration = new ConfigurationBuilder()
@@ -58,7 +47,7 @@ public class LockoutServiceTests
         var service = new LockoutService(_configuration);
         var user = CreateTestUser(email, role);
 
-        user.GenerateCodeCount = CodeMaxAttempts - 1;
+        user.GenerateCodeCount = TestHelpers.CodeMaxAttempts - 1;
 
         // Act
         service.ProcessForGenerateCode(user);
@@ -96,7 +85,7 @@ public class LockoutServiceTests
         var service = new LockoutService(_configuration);
         var user = CreateTestUser(email, role);
 
-        user.LoginFailedCount = LoginMaxAttempts - 1;
+        user.LoginFailedCount = TestHelpers.LoginMaxAttempts - 1;
 
         // Act
         service.ProcessForLogin(user, true);
@@ -116,7 +105,7 @@ public class LockoutServiceTests
         var service = new LockoutService(_configuration);
         var user = CreateTestUser(email, role);
 
-        user.LoginFailedCount = LoginMaxAttempts - 1;
+        user.LoginFailedCount = TestHelpers.LoginMaxAttempts - 1;
 
         service.ProcessForLogin(user, false);
 
@@ -135,8 +124,8 @@ public class LockoutServiceTests
         var service = new LockoutService(_configuration);
         var user = CreateTestUser(email, role);
 
-        user.ConfirmFailedCount = ConfirmMaxAttempts - 1;
-        user.GenerateCodeCount = CodeMaxAttempts - 1;
+        user.ConfirmFailedCount = TestHelpers.ConfirmMaxAttempts - 1;
+        user.GenerateCodeCount = TestHelpers.CodeMaxAttempts - 1;
 
         // Act
         service.ProcessForConfirm(user, true);
@@ -157,7 +146,7 @@ public class LockoutServiceTests
         var service = new LockoutService(_configuration);
         var user = CreateTestUser(email, role);
 
-        user.ConfirmFailedCount = ConfirmMaxAttempts - 1;
+        user.ConfirmFailedCount = TestHelpers.ConfirmMaxAttempts - 1;
 
         // Act
         service.ProcessForConfirm(user, false);
@@ -178,7 +167,7 @@ public class LockoutServiceTests
         var user = CreateTestUser(email, role);
 
         user.LoginLocked = true;
-        user.LoginFailedCount = LoginMaxAttempts;
+        user.LoginFailedCount = TestHelpers.LoginMaxAttempts;
         user.LoginLockExpires = DateTime.UtcNow.AddMinutes(-1);
 
         // Act
@@ -200,8 +189,8 @@ public class LockoutServiceTests
         var user = CreateTestUser(email, role);
 
         user.ConfirmLocked = true;
-        user.GenerateCodeCount = CodeMaxAttempts;
-        user.ConfirmFailedCount = ConfirmMaxAttempts;
+        user.GenerateCodeCount = TestHelpers.CodeMaxAttempts;
+        user.ConfirmFailedCount = TestHelpers.ConfirmMaxAttempts;
         user.ConfirmLockExpires = DateTime.UtcNow.AddMinutes(-1);
 
         // Act
