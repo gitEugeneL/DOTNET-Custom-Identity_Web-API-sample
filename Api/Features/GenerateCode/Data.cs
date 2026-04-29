@@ -5,7 +5,7 @@ using Dapper;
 
 namespace Api.Features.GenerateCode;
 
-internal class Data(DapperDbContext dbContext, IConfiguration configuration) : IRepository
+internal class Data(DapperDbContext dbContext) : IRepository
 {
     public async Task<User?> GetUser(string email, CancellationToken ct)
     {

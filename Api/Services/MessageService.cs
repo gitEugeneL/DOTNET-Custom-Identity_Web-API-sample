@@ -4,7 +4,7 @@ namespace Api.Services;
 
 public class MessageService : IMessageService
 {
-    private const string FileName = "messageCode.txt";
+    public const string FileName = "messageCode.txt";
 
     public async Task<bool> SendMessageAsync(string to, string subject, string body, DateTime expires)
     {
