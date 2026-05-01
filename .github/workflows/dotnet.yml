@@ -45,4 +45,4 @@ jobs:
         run: make down
 
       - name: Down and clean
-        run: down -v
+        run: make down -v
