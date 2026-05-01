@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Makefile = Makefile
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		Api\Dockerfile = Api\Dockerfile
-		Api\messageCode.txt = Api\messageCode.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CB162BBB-3EF2-415B-8677-DB6BF3273B8C}"
