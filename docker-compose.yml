@@ -1,4 +1,5 @@
 services:
+
   api.database:
     build:
       context: ./Database
@@ -14,9 +15,34 @@ services:
         condition: on-failure
         max_attempts: 3
     ports:
-      - "5432:5432"
+      - "5432:5432" # open only for local development
     volumes:
       - api.database:/var/lib/postgresql
+    networks:
+      - custom-identity
+
+  api.app:
+    build:
+      context: .
+      dockerfile: ./Api/Dockerfile
+    container_name: api.app
+    environment:
+      - "ASPNETCORE_ENVIRONMENT=Development" # only for local development
+      - "ConnectionStrings__PSQL=Host=api.database;Port=5432;Database=api;Username=user;Password=password;"
+    ports:
+      - "8000:8080"
+    depends_on:
+      - api.database
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+    networks:
+      - custom-identity
+
+networks:
+  custom-identity:
+    driver: bridge
 
 volumes:
   api.database:
